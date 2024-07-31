@@ -2,7 +2,7 @@
 
 namespace App;
 
-class Hero extends Fighter
+class Hero extends Fighter implements Movable
 {
     private ?Weapon $weapon = null;
     private ?Shield $shield = null;

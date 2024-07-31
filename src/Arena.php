@@ -28,10 +28,10 @@ class Arena
         $this->tiles = $tiles;
     }
 
-    public function move(Fighter $fighter, string $direction)
+    public function move(Movable $movable, string $direction)
     {
-        $x = $fighter->getX();
-        $y = $fighter->getY();
+        $x = $movable->getX();
+        $y = $movable->getY();
         if (!key_exists($direction, self::DIRECTIONS)) {
             throw new Exception('Unknown direction');
         }
@@ -53,8 +53,8 @@ class Arena
             }
         }
 
-        $fighter->setX($destinationX);
-        $fighter->setY($destinationY);
+        $movable->setX($destinationX);
+        $movable->setY($destinationY);
     }
     private function getTile(int $x, int $y): ?Tile {
         $nextTile = null;
