@@ -13,15 +13,19 @@ class Arena
         'W' => [-1, 0],
     ];
 
+    private array $tiles;
+
     private array $monsters;
     private Hero $hero;
 
     private int $size = 10;
 
-    public function __construct(Hero $hero, array $monsters)
+    public function __construct(
+        Hero $hero, array $monsters, ?array $tiles = null)
     {
         $this->hero = $hero;
         $this->monsters = $monsters;
+        $this->tiles = $tiles;
     }
 
     public function move(Fighter $fighter, string $direction)
@@ -38,6 +42,10 @@ class Arena
         if ($destinationX < 0 || $destinationX >= $this->getSize() || $destinationY < 0 || $destinationY >= $this->getSize()) {
             throw new Exception('Out of Map');
         }
+        $tile = $this->getTile($destinationX, $destinationY);
+        if (isset($tile) && !$tile->isCrossable() ) {
+            throw new Exception('Not crossable');
+        }
 
         foreach ($this->getMonsters() as $monster) {
             if ($monster->getX() == $destinationX && $monster->getY() == $destinationY) {
@@ -47,6 +55,17 @@ class Arena
 
         $fighter->setX($destinationX);
         $fighter->setY($destinationY);
+    }
+    private function getTile(int $x, int $y): ?Tile {
+        $nextTile = null;
+        foreach ($this->tiles as $tile) {
+       $tile->getX() === $x && $tile->getY() === $y ? $nextTile = $tile : null;
+        }
+        return $nextTile;
+    }
+
+    public function getTiles(): array{
+     return  $this->tiles;
     }
 
     public function getDistance(Fighter $startFighter, Fighter $endFighter): float
@@ -80,6 +99,18 @@ class Arena
     public function touchable(Fighter $attacker, Fighter $defenser): bool
     {
         return $this->getDistance($attacker, $defenser) <= $attacker->getRange();
+    }
+
+    /**
+     * @return array
+     */
+
+    /**
+     * @param array $tiles
+     */
+    public function setTiles(array $tiles): void
+    {
+        $this->tiles = $tiles;
     }
 
     /**
