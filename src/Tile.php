@@ -17,7 +17,7 @@ abstract class Tile implements Mappable
     /**
      * @return bool
      */
-    public function isCrossable(): bool
+    public function isCrossable($movable): bool
     {
         return $this->crossable;
     }

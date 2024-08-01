@@ -6,7 +6,7 @@ use Exception;
 
 class Arena
 {
-    public const DIRECTIONS = [
+    public const array DIRECTIONS = [
         'N' => [0, -1],
         'S' => [0, 1],
         'E' => [1, 0],
@@ -28,7 +28,10 @@ class Arena
         $this->tiles = $tiles;
     }
 
-    public function move(Movable $movable, string $direction)
+    /**
+     * @throws Exception
+     */
+    public function move(Movable $movable, string $direction): void
     {
         $x = $movable->getX();
         $y = $movable->getY();
@@ -43,7 +46,7 @@ class Arena
             throw new Exception('Out of Map');
         }
         $tile = $this->getTile($destinationX, $destinationY);
-        if (isset($tile) && !$tile->isCrossable() ) {
+        if (isset($tile) && !$tile->isCrossable($movable) ) {
             throw new Exception('Not crossable');
         }
 
@@ -56,6 +59,20 @@ class Arena
         $movable->setX($destinationX);
         $movable->setY($destinationY);
     }
+
+    /**
+     * @throws Exception
+     */
+    public function arenaMove(string $destination): void
+    {
+        $this->move($this->hero, $destination);
+        foreach ($this->monsters as $monster) {
+            if ($monster instanceof Movable) {
+                $this->move($monster, array_rand(self::DIRECTIONS));
+            }
+        };
+}
+
     private function getTile(int $x, int $y): ?Tile {
         $nextTile = null;
         foreach ($this->tiles as $tile) {
@@ -75,6 +92,9 @@ class Arena
         return sqrt($Xdistance ** 2 + $Ydistance ** 2);
     }
 
+    /**
+     * @throws Exception
+     */
     public function battle(int $id): void
     {
         $monster = $this->getMonsters()[$id];
